@@ -1,0 +1,177 @@
+Java Project 1
+
+public class Rzeczownik implements Przypadki {
+    public String noun;
+    Rzeczownik (String n){noun=n;}
+    public String dopelniacz(String gender) {
+        String ending;
+        switch(gender) {
+            case "m":
+                ending = " -a/u";
+                break;
+
+            case "ż":
+                ending = " -y/i";
+                break;
+
+            case "n":
+                ending = " -a";
+                break;
+
+            default:
+                ending = "";
+                break;
+        }
+        return ending;
+    }
+    public String narzednik(String gender) {
+        String ending;
+        switch(gender) {
+            case "m":
+                ending = " -em";
+                break;
+
+            case "ż":
+                ending = " -ą";
+                break;
+
+            case "n":
+                ending = " -em";
+                break;
+
+            default:
+                ending = "";
+                break;
+        }
+        return ending;
+    }
+
+}
+
+
+public interface Przypadki {
+    String dopelniacz(String gender);
+    String narzednik(String gender);
+}
+
+import java.util.Scanner;
+public class main {
+    public static void main(String[] args){
+        System.out.print("Wpisz rzeczownik w liczbie pojedynczej: ");
+        Scanner input = new Scanner(System.in);
+        String noun = input.next();
+        System.out.print("Wpisz rodzaj słowa (ż,m,n): ");
+        input = new Scanner(System.in);
+        String gender = input.next();
+        Rzeczownik y = new Rzeczownik(gender);
+        String ending = y.dopelniacz(gender);
+        String ending2 = y.narzednik(gender);
+        System.out.println("Dopelniacz: "+ noun + ending );
+        System.out.println("Narzędnik: "+ noun + ending2 );
+        System.out.print("Wpisz przymiotnik w liczbie pojedynczej: ");
+        //Scanner input = new Scanner(System.in);
+        String adjective = input.next();
+        System.out.print("Wpisz rodzaj słowa (ż,m,n): ");
+        input = new Scanner(System.in);
+        String gender1 = input.next();
+        Przymiotnik y1 = new Przymiotnik(gender1);
+        String ending1 = y1.dopelniacz(gender);
+        String ending3 = y1.narzednik(gender);
+        System.out.println("Dopelniacz: "+ adjective + ending1 );
+        System.out.println("Narzędnik: "+ adjective + ending3 );
+
+
+
+        input.close();
+    }
+}
+
+------------------------
+
+public class Circle implements FigureMethods{
+    public double radius;
+    Circle (double r){radius = r;}
+    public double perimeter(){
+        return radius*2*Math.PI;
+    }
+    public double area(){
+        return radius*radius*Math.PI;
+    }
+}
+
+
+public class Square implements FigureMethods{
+    double side;
+    Square (double s){side = s;}
+    @Override
+    public double perimeter(){
+        double p = side*4;
+        return p;
+    }
+    @Override
+    public double area(){
+        double a = side*side;
+        return a;
+    }
+}
+public class Rectangle implements FigureMethods {
+    public double width;
+    public double length;
+
+    Rectangle(double w, double l) {
+        width = w;
+        length = l;
+    }
+
+    public double area() {
+        return width * length;
+    }
+
+    public double perimeter() {
+        return 2 * width + 2 * length;
+
+    }
+}
+
+import java.util.Scanner;
+public class JavaCourse {
+    public static void main(String[] args){
+        System.out.print("Enter the figure you want to create: ");
+
+        Scanner input = new Scanner(System.in);
+        String i = input.next();
+        System.out.println("You entered: "+i);
+        switch(i){
+            case "circle":
+                System.out.print("Enter radius: ");
+                double r1 = input.nextDouble();
+                System.out.println("You entered: "+ r1);
+                Circle c = new Circle(r1);
+                System.out.println("Perimeter: "+c.perimeter());
+                System.out.println("Area: "+c.area());
+                break;
+            case "square":
+                System.out.print("Enter side: ");
+                double s1 = input.nextDouble();
+                System.out.println("You entered: "+ s1);
+                Square d = new Square(s1);
+                System.out.println("Perimeter: "+d.perimeter());
+                System.out.println("Area: "+d.area());
+                break;
+            case "rectangle":
+                System.out.print("Enter two sides (click enter after each): ");
+                double p1 = input.nextDouble();
+                double p2 = input.nextDouble();
+                System.out.println("You entered: "+ p1 + " " + p2);
+                Rectangle y = new Rectangle(p1,p2);
+                System.out.println("Perimeter: "+y.perimeter());
+                System.out.println("Area: "+y.area());
+                break;
+            default:
+                System.out.println("Error");
+
+        }
+    }
+}
+
+

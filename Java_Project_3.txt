@@ -1,0 +1,298 @@
+Java Project 3
+
+package włoski;
+
+public class Słownik {
+    String[] słowaWł = {"uno","due","tre"};
+    String[] słowaPl = {"jeden","dwa","trzy"};
+
+    public  String sprawdźWł(String polish, String italian){
+        for(int i=0;i <3;i++){
+            if(polish.equals(słowaPl[i])){
+                if(italian.equals(słowaWł[i])){
+                    return "Poprawnie.";
+                }
+            }
+        }
+        return "Niepoprawnie";
+    }
+
+    public  String sprawdźPl(String polish, String italian){
+        for(int i=0;i <3;i++){
+            if(italian.equals(słowaWł[i])){
+                if(polish.equals(słowaPl[i])){
+                    return "Poprawnie.";
+                }
+            }
+        }
+        return "Niepoprawnie";
+    }
+
+}
+
+import java.util.Scanner;
+import włoski.Słownik;
+//import fiński.Słownik;
+public class SłownikApp {
+    public static void main(String[] args) {
+        Słownik słownikWł = new Słownik();
+        fiński.Słownik słownikFi = new fiński.Słownik();
+
+        System.out.print("Wpisz słowo po polsku: ");
+        Scanner input = new Scanner(System.in);
+        String a = input.next();
+        System.out.print("Wpisz słowo po włosku: ");
+        String b = input.next();
+        Słownik n = new Słownik();
+        System.out.println("Czy poprawnie: "+n.sprawdźWł(a,b));
+
+
+        System.out.print("Wpisz słowo po włosku: ");
+        String a1 = input.next();
+        System.out.print("Wpisz słowo po polsku: ");
+        String b1 = input.next();
+        Słownik n1 = new Słownik();
+        System.out.println("Czy poprawnie: "+n1.sprawdźPl(b1,a1));
+
+    }
+}
+
+package fiński;
+
+public class Słownik {
+    String[] słowaFi = {"yksi","kaksi","kolme"};
+    String[] słowaPl = {"jeden","dwa","trzy"};
+
+    public  String sprawdźFi(String polish, String finish){
+        for(int i=0;i <3;i++){
+            if(polish.equals(słowaPl[i])){
+                if(finish.equals(słowaFi[i])){
+                    return "Poprawnie.";
+                }
+            }
+        }
+        return "Niepoprawnie";
+    }
+
+    public  String sprawdźPl(String polish, String finish){
+        for(int i=0;i <3;i++){
+            if(finish.equals(słowaFi[i])){
+                if(polish.equals(słowaPl[i])){
+                    return "Poprawnie.";
+                }
+            }
+        }
+        return "Niepoprawnie";
+    }
+}
+
+----------------------------
+
+import java.util.Scanner;
+import java.util.Stack;
+public class Main {
+    public static void main(String[] args) {
+        Stack<String> bag = new Stack<>();
+        boolean o = true;
+        while (o) {
+            System.out.print("Wybierz opcję: dodaj, weź, wyświetl, zamknij :");
+            Scanner input = new Scanner(System.in);
+            String x = input.next();
+            if (x.equals("dodaj")) {
+                System.out.print("Wpisz nazwę nowego produktu: ");
+                input = new Scanner(System.in);
+                String nazwa1 = input.next();
+                bag.add(nazwa1);
+            }
+            if (x.equals("weź")) {
+                int a = bag.size() -1;
+                bag.remove(a);
+            }
+            if (x.equals("wyświetl")) {
+                System.out.println("Stack: " + bag);
+            }
+            if (x.equals("zamknij")) {
+                System.out.print("Program zamknięto.");
+                o = false;
+            }
+
+
+        }
+    }
+}
+
+
+----------------------
+
+import java.util.LinkedList;
+import java.util.Scanner;
+import java.util.LinkedList;
+
+public class main1 {
+    public static void main(String[] args) {
+        LinkedList<String> bag = new LinkedList<>();
+        boolean o = true;
+        while (o) {
+            System.out.print("Wybierz opcję: dodaj, weź, wyświetl, zamknij :");
+            Scanner input = new Scanner(System.in);
+            String x = input.next();
+            if (x.equals("dodaj")) {
+                System.out.print("Wpisz nazwę nowego produktu: ");
+                input = new Scanner(System.in);
+                String nazwa1 = input.next();
+                bag.add(nazwa1);
+            }
+            if (x.equals("weź")) {
+                bag.remove();
+            }
+            if (x.equals("wyświetl")) {
+                System.out.println("Stack: " + bag);
+            }
+            if (x.equals("zamknij")) {
+                System.out.print("Program zamknięto.");
+                o = false;
+            }
+
+
+        }
+    }
+}
+
+
+-------------------
+
+import java.util.HashSet;
+import java.util.Scanner;
+
+
+public class main2 {
+    public static void main(String[] args) {
+        HashSet<String> bag = new HashSet<>();
+        boolean o = true;
+        while (o) {
+            System.out.print("Wybierz opcję: dodaj, weź, wyświetl, zamknij :");
+            Scanner input = new Scanner(System.in);
+            String x = input.next();
+            if (x.equals("dodaj")) {
+                System.out.print("Wpisz nazwę nowego produktu: ");
+                input = new Scanner(System.in);
+                String nazwa1 = input.next();
+                bag.add(nazwa1);
+            }
+            if (x.equals("weź")) {
+                System.out.print("Wpisz nazwę nowego produktu: ");
+                input = new Scanner(System.in);
+                String nazwa2 = input.next();
+                bag.remove(nazwa2);
+            }
+            if (x.equals("wyświetl")) {
+                System.out.println("Stack: " + bag);
+            }
+            if (x.equals("zamknij")) {
+                System.out.print("Program zamknięto.");
+                o = false;
+            }
+
+
+        }
+    }
+}
+
+
+-----------------------
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class main3 {
+    public static void main(String[] args) {
+        ArrayList<String> arrl = new ArrayList<>();
+        arrl.add("Sweden");
+        arrl.add("Japan");
+        arrl.add("Kuba");
+        arrl.add("Spain");
+        Iterator value = arrl.iterator();
+        //for(int i = 0; i<arrl.size();i++){
+        //    arrl.remove(i);
+        //}
+
+        System.out.println("The iterator values are: ");
+        while (value.hasNext()) {
+            System.out.println(value.next());
+        }
+    }
+}
+
+-----------------------
+
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class main4 {
+    public static void main(String[] args){
+        HashMap<String,String> kraje = new HashMap<>();
+        kraje.put("Polska","Warszawa");
+        kraje.put("Hiszpania","Madryt");
+        kraje.put("Czechy","Praga");
+        kraje.put("Niemcy","Berlin");
+        kraje.put("Francja","Paryż");
+
+
+        System.out.print("Stolica Hiszpanii: \n");
+        Scanner input = new Scanner(System.in);
+        input = new Scanner(System.in);
+        String stolica1 = input.next();
+        if(kraje.get("Hiszpania").equals(stolica1)){
+            System.out.print("correct \n");
+        }
+        else{
+            System.out.print("Poprawna stolica: " + kraje.get("Hiszpania")+"\n");
+        }
+
+        System.out.print("Stolica Polski: ");
+        input = new Scanner(System.in);
+        String stolica2 = input.next();
+        if(kraje.get("Polska").equals(stolica2)){
+            System.out.print("correct \n");
+        }
+        else{
+            System.out.print("Poprawna stolica: " + kraje.get("Polska")+"\n");
+        }
+
+        System.out.print("Stolica Czechy: ");
+        input = new Scanner(System.in);
+        String stolica3 = input.next();
+        if(kraje.get("Czechy").equals(stolica3)){
+            System.out.print("correct \n");
+        }
+        else{
+            System.out.print("Poprawna stolica: " + kraje.get("Czechy")+"\n");
+        }
+        System.out.print("Stolica Niemiec: ");
+        input = new Scanner(System.in);
+        String stolica4 = input.next();
+        if(kraje.get("Niemcy").equals(stolica4)){
+            System.out.print("correct \n");
+        }
+        else{
+            System.out.print("Poprawna stolica: " + kraje.get("Niemcy")+"\n");
+        }
+
+        System.out.print("Stolica Francji: ");
+        input = new Scanner(System.in);
+        String stolica5 = input.next();
+        if(kraje.get("Francja").equals(stolica5)){
+            System.out.print("correct \n");
+        }
+        else{
+            System.out.print("Poprawna stolica: " + kraje.get("Francja")+"\n");
+        }
+
+
+
+
+
+
+    }
+}
+

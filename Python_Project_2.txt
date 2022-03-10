@@ -1,0 +1,227 @@
+Python Project 2
+
+# Napisz program, który wpisze wszystkie liczby
+# parzyste z przedziału [1, 100]
+
+even_numbers = [number for number in range(2, 101, 2)]
+
+print(even_numbers)
+
+
+#Napisz program, który zamieni liczbę
+#podaną w systemie dziesiętnym na liczbę dwójkową.
+
+number = int(input("Podaj liczbę naturalną: "))
+
+number_binary = " "
+
+while number != 0:
+    number_binary = number_binary + str(number %2)
+    number = number // 2
+
+print(number_binary[::-1])
+
+
+#Napisz program, który odwróci kolejność znaków w każdym
+#wyrazie ciągu znaków podanego przez użytkownika.
+
+answer = input("Podaj ciag znaków: ")
+
+print("Ciąg znaków w odwrotnej kolejności: ", answer[::-1])
+
+#Napisz funkcję, która liczy silnię (dwoma metodami).
+
+def factorial_1(n):
+    """ Calculates factorial """
+    result  = 1
+    for i in range(1, n+1):
+        result = result *i
+
+    return result
+
+
+def factorial_2(p):
+    """ Calculates factorial """
+    if p == 0:
+        return 1
+    else:
+        return factorial_2(p-1)*p
+
+
+n = int(input("Podaj liczbę: "))
+print("Silnia tej liczby wynosi: ", factorial_1(n))
+
+p = int(input("Podaj liczbę: "))
+print("Silnia tej liczby wynosi: ", factorial_2(p))
+
+#Napisz funkcję, która oblicza dowolną
+#wartość ciągu Fibbonacci’ego trzeba sposobami.
+def fibonacci_1(n):
+
+    if n <= 0:
+        print("Zła liczba.")
+
+    elif n == 1:
+        return 0
+
+    elif n == 2:
+        return 1
+
+    else:
+        return fibonacci_1(n - 1) + fibonacci_1(n - 2)
+
+
+fibArray = [0, 1]
+
+def fibonacci_2(n):
+    if n <= 0:
+        print("Zła liczba")
+    elif n <= len(fibArray):
+        return fibArray[n - 1]
+    else:
+        temp_fib = fibonacci_2(n - 1) + fibonacci_2(n - 2)
+        fibArray.append(temp_fib)
+        return temp_fib
+
+def fibonacci_3(p):
+
+    a = 0
+    b = 1
+    if p < 0:
+        print("Zła liczba.")
+    if p == 0:
+        return 0
+    elif p == 1:
+        return b
+    else:
+        for i in range(2,p):
+            c = a + b
+            a = b
+            b = c
+        return b
+
+n = int(input("Podaj liczbę: "))
+print("Pierwszy sposób: ", fibonacci_1(n+1))
+print("Drugi sposób: ", fibonacci_2(n+1))
+print("Trzeci sposób: ", fibonacci_3(n+1))
+
+# Napisz program, który wypisze dokumentację
+# (docstring) wbudowanej funkcji Pythona
+
+def print_docstring(function):
+
+    print(function.__doc__)
+
+print_docstring(max)
+
+
+# Napisz program, który dokonuje konwersji temperatur w trzech
+# skalach: skala Kelvina, skala Fahrenheita, skala Celsjusza.
+# Użytkownik wybiera skalę, w której podaje temperaturę oraz skalę docelową.
+# Każda konwersja powinna być zrealizowana za pomocą osobnej funkcji.
+
+def celsius(stopnie):
+
+    if skala == 1:
+        end_result = stopnie - 273.15
+    if skala == 2:
+        end_result = (stopnie - 32) / 1.8
+    if skala == 3:
+        end_result = stopnie
+
+    return end_result
+
+
+def kelvin(stopnie):
+
+    if skala == 1:
+        end_result = stopnie
+    if skala == 2:
+        end_result = ((stopnie + 459.67) * 5) / 9
+    if skala == 3:
+        end_result = stopnie + 273.15
+
+    return end_result
+
+
+def fahrenheit(stopnie):
+
+    if skala == 1:
+        end_result = ((stopnie * 9) / 5) - 459.67
+    if skala == 2:
+        end_result = stopnie
+    if skala == 3:
+        end_result = stopnie * 1.8 + 32
+
+    return end_result
+
+
+skala = int(input("Zaznacz w jakiej skali podajesz stopnie( 1 - Kelvin,"
+                  " 2 - Fahrenheit, 3 - Celsjusz): "))
+stopnie = float(input("Podaj stopnie: "))
+skala_docelowa = int(input("Zaznacz w jakiej skali chcesz otrzymać wynik"
+                           "( 1 - Kelvin, 2 - Fahrenheit, 3 - Celsjusz): "))
+
+if skala_docelowa == 1: print(kelvin(stopnie))
+if skala_docelowa == 2: print(fahrenheit(stopnie))
+if skala_docelowa == 3: print(celsius(stopnie))
+
+
+#Napisz funkcję, która sprawdza czy dana liczba jest pierwsza.
+
+def prime_number(number):
+    """Check if a number is prime or not"""
+    if number > 1:
+
+        for i in range(2, number):
+            if (number % i) == 0:
+                print(number, "nie jest liczbą pierwszą.")
+                break
+        else:
+                print(number, "jest liczbą pierwszą.")
+
+    else:
+        print(num, "nie jest liczbą pierwszą.")
+
+number = int(input("Podaj liczbę: "))
+prime_number(number)
+
+#Napisz funkcję, która wypisuje wszystkie liczby
+#pierwsze w danym przedziale.
+
+def prime_number(lower, upper):
+    """Write prime numbers in interval"""
+    for number in range(lower, upper + 1):
+
+        if number > 1:
+            for i in range(2, number):
+                if (number % i) == 0:
+                    break
+            else:
+                print(number)
+
+
+lower = int(input("Podaj ograniczenie dolne przedziału: "))
+upper = int(input("Podaj ograniczenie górne przedziału: "))
+print("Liczby pierwsze w podanym przedziale: ")
+prime_number(lower, upper)
+
+
+#Napisz funkcję rekurencyjną, która znajdzie sumę wszystkich
+#nieparzystych liczb z przedziału [1, n] dla zadanego n.
+
+def sum(n):
+    """Sum n odd numbers"""
+    odd_numbers = 0
+    print("Liczby nieparzyste w danym przedziale:")
+    for number in range(1, n + 1):
+        if (number % 2 != 0):
+            print(number)
+            odd_numbers = odd_numbers + number
+
+    return odd_numbers
+
+
+n = int(input("Podaj liczbę: "))
+print("Rozpatrywany przedział to ( 1,", n, ")")
+print("Suma liczb nieparzystych w danym przedziale wynosi: ", sum(n))

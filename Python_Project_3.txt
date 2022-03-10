@@ -1,0 +1,565 @@
+Python Project 3
+
+import skimage 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import sympy as sym
+from sympy import *
+from math import *
+import matplotlib.pyplot as plt
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+import collections
+from collections import Counter
+
+from pathlib import Path
+pd.set_option('display.width',100)
+pd.set_option('display.max_columns',10)
+df = pd.read_csv(Path("marketing_campaign.csv"),sep = "\t")
+#WAŻNE ZMIANY W BAZIE
+df = df[df.Marital_Status != "YOLO"]
+df = df[df.Marital_Status != "Absurd"]
+df = df[df.Year_Birth >= 1921]
+df = df[df.Income != '']
+df = df.dropna()
+df['is_parent']= (df['Kidhome']+ df['Teenhome'])
+df['Amount_spent'] = (df['MntWines'] + df['MntFruits'] + df['MntMeatProducts'] + 
+                      df['MntFishProducts'] + df['MntSweetProducts'] + df['MntGoldProds'])
+df['Age'] = (2022 - df['Year_Birth'])
+df['NotVege'] = (df['MntMeatProducts']+df['MntFishProducts'])
+print(df)
+
+df["Marital_Status"]=df["Marital_Status"].replace({'Married':'Małżeństwo',
+                                                   'Together':'Partnerzy',
+                                                   'Single':'Singiel',
+                                                   'Divorced':'Rozwiedziony',
+                                                   'Widow':'Wdowa/Wdowiec',
+                                                   'Alone':'Samotny'})
+avg_wine = df.groupby('Marital_Status')['MntWines'].agg(np.mean)
+print(avg_wine)
+fig =plt.figure(figsize=(10, 5))
+ax = fig.add_subplot()
+plt.bar(avg_wine.index, avg_wine,color = "darkred")
+
+def getImage(https):
+    return OffsetImage(plt.imread(https),zoom=0.7)
+
+http = [
+    'wino.png',
+    'wino.png',
+    'wino.png',
+    'wino.png',
+    'wino.png',
+    'wino.png'
+    ] 
+x=[0,1,2,3,4,5]
+y=[avg_wine.max()/2+12,avg_wine.max()/2+12,avg_wine.max()/2+12,
+   avg_wine.max()/2+12,avg_wine.max()/2+12,avg_wine.max()/2+12]
+for x, y, https in zip(x, y,http):
+    o = AnnotationBbox(getImage(https), (x, y), frameon=False)
+    ax.add_artist(o)
+ax.spines['bottom'].set_color('none')
+ax.spines['top'].set_color('none')
+ax.spines['right'].set_color('none')
+plt.xlabel("Status związku")
+plt.ylabel("Średnie wydatki na wino")
+
+plt.savefig("wino_status.png")
+
+df['Marital_Status'].replace(to_replace=['Single', 'Divorced', 'Widow', 'Alone'],
+                             value='Single', inplace=True)
+df['Marital_Status'].replace(to_replace=['Married', 'Together'], value='Together',
+                             inplace=True)
+
+df1 = [df['Z_Revenue'],df['Marital_Status'],df['Education']]
+headers = ['Z_Revenue','Marital_Status','Education']
+df1 = pd.concat(df1,axis=1,keys=headers)
+df1 = df1.groupby(['Z_Revenue', 'Marital_Status', 'Education']).size().reset_index()
+df1 = pd.pivot_table(df1, index=['Z_Revenue'], 
+                     columns=['Marital_Status', 'Education'])
+df1 = df1.iloc[0].reset_index()
+del df1['level_0']
+df1 = df1.pivot_table(11, ['Marital_Status', 'Education'])
+print(df1)
+facecolor = '#eaeaf2'
+font_color = '#525252'
+hfont = {'fontname':'Calibri'}
+labels = ['Singiel','W związku']
+size = 0.3
+vals = df1[11]
+group_sum = df1.groupby('Marital_Status')[11].sum()
+fig, ax = plt.subplots(figsize=(10,6), facecolor=facecolor)
+cmap = plt.get_cmap("flare")
+outer_colors = cmap(np.arange(10)*40)
+inner_colors = cmap(np.array([100, 150, 200, 225, 350]))
+ax.pie(group_sum, 
+       radius=1, 
+       colors=outer_colors, 
+       labels=labels, 
+       textprops={'color':font_color},
+       wedgeprops=dict(width=size, edgecolor='w'))
+
+ax.pie(vals, 
+       radius=1-size, 
+       colors=inner_colors,
+       autopct='%1.1f%%',
+       pctdistance=0.8,
+       textprops=dict(color="w"),
+       wedgeprops=dict(width=size, edgecolor='w'))
+plt.legend(['Singiel','W związku','Po studiach 1 stopnia','Podstawowe',
+            'Po studiach','Magister','Doktor'],loc =[-0.4,0])
+plt.savefig("kolo_status_edukacja.png")
+
+df['Marital_Status'].replace(to_replace=['Single', 'Divorced', 'Widow', 'Alone'],
+                             value='Single', inplace=True)
+df['Marital_Status'].replace(to_replace=['Married', 'Together'], value='Together',
+                             inplace=True)
+headers = ['Marital_Status','MntWines','MntFruits',
+           'MntMeatProducts','MntFishProducts','MntSweetProducts']
+data= [df['Marital_Status'], df['MntWines'],df['MntFruits'],
+       df['MntMeatProducts'],df['MntFishProducts'],df['MntSweetProducts']]
+df1 = pd.concat(data,axis=1,keys=headers)
+df2 = df1.loc[df1['Marital_Status'] != 'Single']
+df3 = df1.loc[df1['Marital_Status'] != 'Together']
+dane_t = [df2['MntWines'].mean(),df2['MntFruits'].mean(),
+          df2['MntMeatProducts'].mean(),df2['MntFishProducts'].mean(),
+          df2['MntSweetProducts'].mean()]
+dane_s = [df3['MntWines'].mean(),df3['MntFruits'].mean(),
+          df3['MntMeatProducts'].mean(),df3['MntFishProducts'].mean(),
+          df3['MntSweetProducts'].mean()]
+d = {'Products':['Wino','Owoce','Mięso','Ryby','Słodycze'],
+     'Single':dane_s,'Together':dane_t}
+data = pd.DataFrame(data = d)
+data.set_index('Products', inplace=True)
+print(data)
+font_color = '#525252'
+hfont = {'fontname':'Calibri'}
+facecolor = '#FFFFFF'
+color_red = '#CD1076'
+color_blue = '#8B0A50'
+index = data.index
+column0 = data['Single']
+column1 = data['Together']
+title0 = 'Razem'
+title1 = 'Singiel'
+fig, axes = plt.subplots(figsize=(16,8), facecolor=facecolor,
+                         ncols=2, sharey=True)
+fig.tight_layout()
+axes[0].set_xlim(0,350)
+axes[1].set_xlim(0,350)
+axes[0].barh(index, column0, align='center', color=color_red, zorder=10)
+axes[0].set_title(title0, fontsize=18, pad=15, color=color_red,
+                  **hfont,bbox = dict(facecolor='white', edgecolor='#CD1076'))
+axes[1].barh(index, column1, align='center', color=color_blue, zorder=10)
+axes[1].set_title(title1, fontsize=18, pad=15, color=color_blue,
+                  **hfont,bbox = dict(facecolor='white', edgecolor='#8B0A50'))
+axes[0].invert_xaxis() 
+plt.gca().invert_yaxis()
+axes[0].set(yticks=data.index, yticklabels=data.index)
+axes[0].yaxis.tick_left()
+axes[0].tick_params(axis='y', colors='white')
+for label in (axes[0].get_xticklabels() + axes[0].get_yticklabels()):
+    label.set(fontsize=13, color=font_color, **hfont)
+for label in (axes[1].get_xticklabels() + axes[1].get_yticklabels()):
+    label.set(fontsize=13, color=font_color, **hfont)
+plt.subplots_adjust(wspace=0, top=0.85, bottom=0.1, left=0.18, right=0.95)
+
+plt.text(-341,0.1,str(round(308.992308,2)))
+plt.text(307,0.1,str(round(302.964311,2))).set_zorder(1)
+
+plt.text(-53,1.1,str(round(27.732051,2)))
+plt.text(29,1.1,str(round(25.506648,2)))
+
+plt.text(-207,2.1,str(round(174.439744,2)))
+plt.text(166,2.1,str(round(162.841148,2)))
+
+plt.text(-65,3.1,str(round(38.710256,2)))
+plt.text(40,3.1,str(round(36.860742,2)))
+
+plt.text(-54,4.1,str(round(28.035897,2)))
+plt.text(30,4.1,str(round(26.517145,2)))
+axes[1].spines['left'].set_color('none')
+
+plt.savefig("produkty_razem_singiel.png")
+
+df1 = df[df.Income < 200000]
+plt.figure(figsize=(10, 8))
+palette = sns.color_palette("flare",4)
+sns.scatterplot(data=df1, x='Income',y = 'Amount_spent', hue='is_parent',
+                palette = palette)
+plt.xlabel("Przychód")
+plt.ylabel("Kwota wydatków")
+plt.legend(title = "Ilość dzieci w domu",loc = 'best', prop={'size': 11})
+plt.savefig("wydatki_przychod_dzieci.png")
+
+
+-------------------------------------
+
+import skimage 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import sympy as sym
+from sympy import *
+from math import *
+import matplotlib.pyplot as plt
+from itertools import combinations
+
+import collections
+from collections import Counter
+
+pd.set_option('display.width',85)
+pd.set_option('display.max_columns',10)
+dane = pd.read_csv('http://www.mbnet.com.pl/dl.txt', names = ['ID','DATA','WYNIKI'],sep = ' ', low_memory=True)
+dane[['FIRST','SECOND','THIRD','FOURTH','FIFTH','SIXTH']] = dane['WYNIKI'].str.split(',', expand = True)
+pd.to_numeric(dane['FIRST'])
+pd.to_numeric(dane['SECOND'])
+pd.to_numeric(dane['THIRD'])
+pd.to_numeric(dane['FOURTH'])
+pd.to_numeric(dane['FIFTH'])
+pd.to_numeric(dane['SIXTH'])
+dane = dane.iloc[-6000:]
+dane1 = pd.DataFrame(zip(dane['FIRST'], dane['SECOND'], dane['THIRD'],dane['FOURTH'],dane['FIFTH'],dane['SIXTH']))
+dane2 = dane1.values.tolist()
+kombinacje= []
+for i in range(0,len(dane2)):
+  x = list(combinations(dane2[i],2))
+  kombinacje = kombinacje + x
+  
+a = Counter(kombinacje)
+a = a.most_common(20)
+a = a[:20]
+
+nazwy = []
+ilosc =[]
+for i in range (0,20):
+  nazwy.append(a[i][0])
+
+for i in range (0,20):
+  ilosc.append(a[i][1])
+
+b = Counter(kombinacje)
+b = b.most_common(6000)
+iloscb =[]
+for i in range (0,len(b)):
+  iloscb.append(b[i][1])
+
+x = np.arange(1, 21)
+
+plt.style.use('default')
+fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(12, 8))
+c1 = sns.color_palette("husl",20)
+c2 = sns.color_palette("husl",7)
+for i in range(1,20):
+  if ilosc[i]==ilosc[i-1]:
+    c1[i] = c1[i-1]
+
+ax1.bar(x,ilosc,0.90, color = c1,align='center')
+ax1.xaxis.set_visible(False)
+
+for j in range(0,20):
+  ax1.text(x[j]-0.3, ilosc[j]+2, str(nazwy[j][0]), color='black', fontsize = 7)
+for j in range(0,20):
+  ax1.text(x[j]-0.3, ilosc[j]+5, str(nazwy[j][1]), color='black', fontsize = 7)
+for j in range(0,20):
+  ax1.text(x[j]-0.3, ilosc[j]/2, str(ilosc[j]), color='black', fontsize = 7)
+
+ax1.spines['bottom'].set_color('none')
+ax1.spines['top'].set_color('none')
+ax1.spines['right'].set_color('none')
+
+dane3 = []
+
+for i in range(0,6000):
+  for j in range(0,6):
+    dane3.append(int(dane2[i][j]))
+
+avg = sum(iloscb)/len(iloscb) 
+
+ax1.plot([-1,22],[avg,avg],"-",color='black',zorder=0)
+
+list_0P6NP =[]
+list_1P5NP =[]
+list_2P4NP =[]
+list_3P3NP =[]
+list_4P2NP =[]
+list_5P1NP =[]
+list_6P0NP =[]
+
+for i in range(0,6000):
+  parzyste =0
+  for j in range(0,6):
+    if int(dane1.iloc[i][j])%2==0:
+      parzyste = parzyste +1
+  if parzyste==0:
+    list_0P6NP.append(1)
+  if parzyste==1:
+    list_1P5NP.append(1)
+  if parzyste==2:
+    list_2P4NP.append(1)
+  if parzyste==3:
+    list_3P3NP.append(1)
+  if parzyste==4:
+    list_4P2NP.append(1)
+  if parzyste==5:
+    list_5P1NP.append(1)
+  if parzyste==6:
+    list_6P0NP.append(1)
+
+P0NP6 = len(list_0P6NP)
+P1NP5 = len(list_1P5NP)
+P2NP4 = len(list_2P4NP)
+P3NP3 = len(list_3P3NP)
+P4NP2 = len(list_4P2NP)
+P5NP1 = len(list_5P1NP)
+P6NP0 = len(list_6P0NP)
+
+labels = 'P0NP6', 'P1NP5', 'P2NP4', 'P3NP3', 'P4NP2', 'P5NP1', 'P6NP0'
+sizes = [P0NP6,P1NP5,P2NP4,P3NP3,P4NP2,P5NP1,P6NP0]
+
+ax2.pie(sizes,colors = c2, autopct='%1.2f%%',explode = [0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02])
+ax2.axis('equal') 
+my_circle=plt.Circle((0,0), 0.3, color='white')
+p=plt.gcf()
+p.gca().add_artist(my_circle)
+ax2.legend(labels, loc = 'best')
+ax1.set_title('Analiza wyników Lotto. \n Pierwsze losowanie: '+str(dane['DATA'].iloc[0])+'\n Ostatnie losowanie: '+str(dane['DATA'].iloc[-1])+'\n Liczba losowań: 6000 \n Najczęściej losowane 20 par liczb:')
+ax2.set_title('Częstość nieparzystych (N) i parzystych (P) liczb w losowaniu:')
+plt.show()
+fig.savefig('6_mac_275013.svg')
+fig.savefig('6_mac_275013.pdf')
+
+------------------------
+
+import skimage 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import sympy as sym
+from sympy import *
+from math import *
+import matplotlib.pyplot as plt
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+
+
+T_pierwotne= [0.3870993,0.723336,1.000003, 1.52371,5.2029,9.537,19.189,30.0699]
+R_pierwotne = [0.2408467,0.61519726, 1.0000174, 1.8808158, 11.862615, 29.447498, 84.016846, 164.79132]
+T=[]
+R=[]
+T_2=[]
+R_3=[]
+for i in range (8):
+  T.append(T_pierwotne[i]*1.49597870700*10**11)
+for j in range (8):
+  R.append(R_pierwotne[j]*31557600)
+for z in range (8):
+  T_2.append(T[z]**2)
+for a in range (8):
+  R_3.append(R[a]**3)
+
+
+plt.style.use('dark_background')
+fig=plt.figure(figsize=(20,10))
+ax = fig.add_subplot()
+ax.scatter(T_2,R_3)
+ax.plot(T_2,R_3, color = "lime")
+
+ax.set_yscale('log')
+ax.set_xscale('log')
+
+plt.text(10**22,10**27,r'$\frac{T^{2}}{R^{3}}$=constans', fontsize=30)
+
+
+def getImage(https):
+    return OffsetImage(plt.imread(https),zoom=0.1)
+
+http = [
+    'https://cdn130.picsart.com/289649445046211.png',
+    'https://cdn140.picsart.com/268434396024211.png',
+    'https://nineplanets.org/wp-content/uploads/2019/09/earth.png',
+    'https://calcoolator.pl/images/rozrywka/planety/mars.png',
+    'https://www.nicepng.com/png/full/387-3872289_jupiter-planet-png-pluspng-pluspng-planets-far-from.png',
+    'https://calcoolator.pl/images/rozrywka/planety/saturn.png',
+    'https://nineplanets.org/wp-content/uploads/2019/09/uranus.png',
+    'https://nineplanets.org/wp-content/uploads/2019/09/neptune.png'
+    ] 
+
+for x, y, https in zip(T_2, R_3,http):
+    o = AnnotationBbox(getImage(https), (x, y), frameon=False)
+    ax.add_artist(o)
+
+
+ax.set_xlabel('Okres orbitalny (T)',fontsize = 14)
+ax.set_ylabel('Półoś wielka (R)',fontsize = 14)
+ax.set_title('Trzecie prawo Keplera' ,fontsize = 30)
+plt.savefig('3_mac_275013.pdf')
+plt.show()
+
+
+------------------------
+
+import skimage 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import sympy as sym
+from sympy import *
+from math import *
+import matplotlib.pyplot as plt
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+from matplotlib import cm
+
+import urllib
+url = "https://wolnelektury.pl/media/book/txt/mendel-gdanski.txt"
+file = urllib.request.urlopen(url)
+text=""
+for line in file:
+	text = text + line.decode("utf-8")
+	
+words = text.split()
+slowa = list(words)
+slowa2=list(map(lambda x: x.replace(',',''),slowa))
+slowa3=list(map(lambda x: x.replace('.',''),slowa2))
+slowa4=list(map(lambda x: x.replace('?',''),slowa3))
+slowa5=list(map(lambda x: x.replace('!',''),slowa4))
+slowa6=list(map(lambda x: x.replace(':',''),slowa5))
+slowa7=list(map(lambda x: x.lower(),slowa6))
+slowa8 = []
+for i in range(0,7723):
+  if len(slowa7[i])>4:
+    slowa8.append(slowa7[i])
+from collections import Counter
+slowa9 = Counter(slowa8)
+slowa10=list(slowa9.most_common(20))
+
+slowka = []
+ilosc = []
+for i in range(0,20):
+  slowka.append(slowa10[i][0])
+
+for i in range(0,20):
+  ilosc.append(slowa10[i][1])
+
+
+max2 = 2* int(max(ilosc))
+colors1 = []
+for i in range(0,20):
+  
+  colors1.append([0.7-(round(ilosc[i]/max2,2)),(round(ilosc[i]/max2,2)),0.2+(round(ilosc[i]/max2,2))])
+print(colors1)
+plt.style.use('default')
+plt.figure(figsize=(20,12))
+fig, ax = plt.subplots()
+
+plt.barh(slowka,ilosc,0.90, color = colors1)
+
+
+ax.set_yticklabels("", minor=False)
+ax.invert_yaxis()
+for i, v in enumerate(ilosc):
+    ax.text(v + 0.4, i +0.3, slowka[i])
+for i, v in enumerate(ilosc):
+    ax.text(v/2, i +0.3, str(v), color='black')
+
+plt.title('"Mendel gdański" Maria Konopnicka. Ilość słów: '+str(len(slowa7)) +'.\n 20 najczęściej występujących słów (długość>5):',fontstyle ='italic', fontweight =  'roman' )
+ax.yaxis.set_visible(False)
+ax.spines['right'].set_color('none')
+ax.spines['top'].set_color('none')
+ax.spines['left'].set_color('none')
+plt.savefig('4_mac_275013.svg')
+plt.show()
+
+
+-----------------------------
+
+import skimage 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import sympy as sym
+from sympy import *
+from math import *
+import matplotlib.pyplot as plt
+import random
+
+n = random.randint(1,30)
+
+x = np.linspace(0, 5, n+1)
+y= 1/(10+x**3)
+X = np.linspace(0, 5, n*(n+1))
+Y = 1/(10+X**3)
+
+fig, (ax1, ax2, ax3) = plt.subplots(nrows=1, ncols=3, sharex=True, figsize=(12, 6))
+
+ax1.plot(1, 0, ">k", transform=ax1.get_yaxis_transform(), clip_on=False)
+ax1.plot(0, 1, "^k", transform=ax1.get_xaxis_transform(), clip_on=False)
+
+ax2.plot(1, 0, ">k", transform=ax2.get_yaxis_transform(), clip_on=False)
+ax2.plot(0, 1, "^k", transform=ax2.get_xaxis_transform(), clip_on=False)
+
+ax3.plot(1, 0, ">k", transform=ax3.get_yaxis_transform(), clip_on=False)
+ax3.plot(0, 1, "^k", transform=ax3.get_xaxis_transform(), clip_on=False)
+
+ax1.plot(X, Y,color = 'rebeccapurple')
+ax2.plot(X, Y,color = 'rebeccapurple')
+ax2.fill_between(X, Y, facecolor='thistle', alpha=0.5)
+ax3.plot(X,Y,color = 'rebeccapurple')
+
+x1_R = x[:-1]
+y1_R = y[:-1]
+ax1.plot(x1_R,y1_R,'b.',markersize=10, color = "indigo")
+ax1.bar(x1_R,y1_R,width=5/n,alpha=0.2,align='edge',color = 'darkmagenta',edgecolor='darkmagenta')
+
+x3_R = x[1:]
+y3_R = y[1:]
+ax3.plot(x3_R,y3_R,'b.',markersize=10,color = "indigo")
+ax3.bar(x3_R,y3_R,width=-5/n,alpha=0.2,align='edge',color = 'darkmagenta',edgecolor='darkmagenta')
+
+ax1.set_ylim(bottom=0)
+ax2.set_ylim(bottom=0)
+ax3.set_ylim(bottom=0)
+ax1.set_xlim(left=0)
+ax2.set_xlim(left=0)
+ax3.set_xlim(left=0)
+
+ax1.spines['right'].set_color('none')
+ax1.spines['top'].set_color('none')
+
+ax2.spines['right'].set_color('none')
+ax2.spines['top'].set_color('none')
+
+ax3.spines['right'].set_color('none')
+ax3.spines['top'].set_color('none')
+ax2.text(2,0.08,r'$f(x) = \frac{1}{10+x^{3}}$', fontsize=15)
+
+
+suma1=0
+
+for i in range(0, n):
+  suma1 = suma1 + y1_R[i]*(5/n)
+
+
+suma3=0
+for i in range(0, n):
+  suma3 = suma3 + y3_R[i]*(5/n)
+
+
+ax1.set_title('suma I = '+str(round(suma1,5)))
+ax3.set_title('suma II = '+str(round(suma3,5)))
+
+from scipy.integrate import quad
+def integrand(x):
+    return 1/(10+x**3)
+
+ans, err = quad(integrand, 0, 5)
+
+
+fig.suptitle('Przedziałów jest: '+str(n)+ '. Pole wynosi ≈' +str(round(ans,5)) )
+fig.savefig('5_mac_275013.svg')
+fig.savefig('5_mac_275013.pdf')
+

@@ -1,0 +1,351 @@
+Java Project 4
+
+import java.util.*;
+import java.util.stream.IntStream;
+public class ThreadBasics {
+    public static void main(String[] args) throws InterruptedException {
+        long nanoTime1 = System.nanoTime();
+        MyThread1 mt1 = new MyThread1();
+        mt1.start();
+
+        MyThread2 mt2 = new MyThread2();
+        //mt2.start();NIE DZIAŁA
+        Thread t = new Thread(mt2);
+        t.start();
+        int[] tab = {12, 1, 21, 8,11,33,12,14,11,18};
+        int min = Arrays.stream(tab).min().getAsInt();
+        int max = Arrays.stream(tab).max().getAsInt();
+        Thread.sleep(1000);
+        System.out.println("Min = " + min);
+        Thread.sleep(1000);
+        System.out.println("Max = " + max);
+        long nanoTime2 = System.nanoTime();
+        long a = nanoTime2-nanoTime1;
+        System.out.println("Time of execution is: "+ a);
+
+
+
+
+    }
+}
+
+import java.util.Arrays;
+
+public class MinThread extends Thread{
+    int[] tab;
+    MinThread(int [] tab){
+        this.tab = tab;
+    }
+
+    @Override
+    public void run(){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        int min = Arrays.stream(tab).min().getAsInt();
+        System.out.println("Min = " + min);
+
+
+
+    }
+}
+
+import java.util.Arrays;
+
+public class MaxThread extends Thread{
+    int[] tab;
+    MaxThread(int [] tab){
+        this.tab = tab;
+    }
+    @Override
+    public void run(){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        int max = Arrays.stream(tab).max().getAsInt();
+        System.out.println("Max = " + max);
+
+
+    }
+}
+
+
+import java.util.Arrays;
+
+public class main {
+    public static void main(String[] args) throws InterruptedException {
+        long nanoTime1 = System.nanoTime();
+        int[] tab = {12, 1, 21, 8,11,33,12,14,11,18};
+        MinThread min = new MinThread(tab);
+        min.start();
+
+        MaxThread max = new MaxThread(tab);
+        max.start();
+        max.join();
+        min.join();
+        long nanoTime2 = System.nanoTime();
+        long a = nanoTime2-nanoTime1;
+        System.out.println("Time of execution is: "+ a);
+    }
+}
+
+
+-----------------------------------------
+
+
+import java.util.Date;
+import java.util.Scanner;
+public class main1 {
+    public static void main(String[] args){
+        String[] znaki = new String[]{"baran","byk","bliźnięta","rak","lew",
+                "panna","waga","skorpion","strzelec","koziorożec","wodnik","ryby"};
+        String[] daty = new String[]{"21.03-20.04","21.04-21.05", "22.05-21.06","22.06-22.07","23.07-23.08",
+                "24.08-22.09","23.09-22.10","23.10-22.11","23.11-21.12","22.12-19.01","20.01-18.02","19.02-20.03"};
+        String day = "";
+        String month = "";
+        String year = "";
+        System.out.println("Enter birthdate (DD/MM/YYYY):");
+        Scanner input = new Scanner(System.in);
+        String data = input.next();
+        day = data.substring(0, 2);
+        System.out.println(day);
+        month = data.substring(3, 5);
+        System.out.println(month);
+        year = data.substring(6, 10);
+        System.out.println(year);
+
+        AgeThread age = new AgeThread(day,month,year);
+        age.start();
+
+        try
+        {
+            System.out.println("The current thread name is: "+ Thread.currentThread().getName());
+            age.join();
+        }
+        catch(Exception e)
+        {
+            System.out.println("The exception has been caught " + e);
+        }
+
+
+
+        ZnakThread znak = new ZnakThread(day,month,year);
+        znak.start();
+
+        try
+        {
+            System.out.println("The current thread name is: " + Thread.currentThread().getName());
+            znak.join();
+        }
+
+// catch block for catching the raised exception
+        catch(Exception e)
+        {
+            System.out.println("The exception has been caught " + e);
+        }
+        System.out.println("The end.");
+    }
+}
+import java.util.Arrays;
+
+public class AgeThread extends Thread{
+    String day;
+    String month;
+    String year;
+    AgeThread(String day,String month,String year){this.day = day;this.month = month; this.year = year;}
+
+    public void run(){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        int i=Integer.parseInt(year);
+        int age = 2022 - i;
+        System.out.println("Wiek: " + age);
+    }
+}
+
+import java.util.Arrays;
+
+public class ZnakThread extends Thread{
+    String[] znaki = new String[]{"baran","byk","bliźnięta","rak","lew",
+            "panna","waga","skorpion","strzelec","koziorożec","wodnik","ryby"};
+    String[] daty = new String[]{"21.03-20.04","21.04-21.05", "22.05-21.06","22.06-22.07","23.07-23.08",
+            "24.08-22.09","23.09-22.10","23.10-22.11","23.11-21.12","22.12-19.01","20.01-18.02","19.02-20.03"};
+    String day;
+    String month;
+    String year;
+    ZnakThread(String day,String month,String year){this.day = day;this.month = month; this.year = year;}
+    public void run(){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("ok");
+    }
+}
+
+------------------------------------
+
+import com.sun.jdi.CharType;
+import java.util.ArrayList;
+import java.util.*;
+
+public class main2 {
+    public static void main(String[] args) {
+        ArrayList<String> initialArrL = new ArrayList<String>();
+        initialArrL.add("1");
+        initialArrL.add("j");
+        initialArrL.add("a");
+        initialArrL.add("h");
+        initialArrL.add("10");
+        initialArrL.add("3");
+        initialArrL.add("b");
+        initialArrL.add("d");
+        initialArrL.add("2");
+        initialArrL.add("c");
+        initialArrL.add("g");
+        initialArrL.add("7");
+        initialArrL.add("f");
+        initialArrL.add("4");
+        initialArrL.add("5");
+        initialArrL.add("e");
+        initialArrL.add("8");
+        initialArrL.add("6");
+        initialArrL.add("9");
+
+        //for (String str : initialArrL)
+        //{
+        //    System.out.println(str);
+        //}
+
+        SortIntegersThread numbers = new SortIntegersThread(initialArrL);
+        numbers.start();
+
+        SortStringsThread letter = new SortStringsThread(initialArrL);
+        letter.start();
+    }
+
+}
+
+import java.util.*;
+
+public class SortIntegersThread extends Thread{
+    private List<String> initialArrL;
+
+    public SortIntegersThread(List<String> initialArrL)
+    {
+        this.initialArrL=initialArrL;
+    }
+    public void run()
+    {
+        ArrayList<String> numbers = new ArrayList<String>();
+        for(int i = 0;i<19;i++){
+            if(initialArrL.get(i).equals("1")){
+                numbers.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("2")){
+                numbers.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("3")){
+                numbers.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("4")){
+                numbers.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("5")){
+                numbers.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("6")){
+                numbers.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("7")){
+                numbers.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("8")){
+                numbers.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("9")){
+                numbers.add(initialArrL.get(i));
+            }if(initialArrL.get(i).equals("10")){
+                numbers.add(initialArrL.get(i));
+            }
+        }
+
+        Collections.sort(numbers);
+
+        for(String counter: numbers){
+            System.out.println(counter);
+        }
+
+
+    }
+
+}
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SortStringsThread extends Thread{
+    private List<String> initialArrL;
+
+    public SortStringsThread(List<String> initialArrL)
+    {
+        this.initialArrL=initialArrL;
+    }
+    public void run()
+    {
+        ArrayList<String> letter = new ArrayList<String>();
+        for(int i = 0;i<19;i++){
+            if(initialArrL.get(i).equals("a")){
+                letter.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("b")){
+                letter.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("c")){
+                letter.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("d")){
+                letter.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("e")){
+                letter.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("f")){
+                letter.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("g")){
+                letter.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("h")){
+                letter.add(initialArrL.get(i));
+            }
+            if(initialArrL.get(i).equals("i")){
+                letter.add(initialArrL.get(i));
+            }if(initialArrL.get(i).equals("i")){
+                letter.add(initialArrL.get(i));
+            }
+        }
+        for (String str : letter)
+        {
+            System.out.println(str);
+        }
+
+
+
+    }
+}
+
+
+
+
+
+

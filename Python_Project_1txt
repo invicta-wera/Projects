@@ -1,0 +1,243 @@
+Python 1
+
+class Stack:
+        def __init__(self,N):
+                self.items=[0]*N
+                self.size=0
+
+        def push(self,x):
+                self.items[self.size]=x
+                self.size +=1
+
+        def pop(self):
+                self.size -=1
+                return self.items[self.size]
+
+        def print(self):
+                print(self.items[:self.size])
+
+        def isempty(self):
+                return self.size==0
+
+        def reset(self):
+                self.size=0
+print("Niniejszy program oblicza dla każdej liczby naturalnej zapisanej w systemie dziesiętnym jej odpowiednik w systemie pozycyjnym o bazie z przedziału <2 ; 9 >.")
+end =False
+while not end:
+    n = input('Wprowadź wybraną liczbę naturalną, lub "stop":')
+    twoja_liczba = n
+    if n != 'pomyłka':
+        n=int(n)
+        d = int(input('Wprowadź liczbę z przedziału < 2 ; 9 >,która będzie wybranym systemem pozycyjnym :'))
+        stos = Stack(1000)
+        if d>1 and d <10:
+            while n>0:
+                x = n%d
+                stos.push(x)
+                n = int(n/d)             
+            o=''           
+            while not stos.isempty():
+                o += str(stos.pop())
+            print(" ")
+            print("Liczba ",twoja_liczba," w systemie o bazie ",d," to: ",o)
+        else:
+            print('Liczba spoza przedziału.')
+    else:
+        end =True
+
+ 
+--------------------------
+def multi_merge(a):
+    b=[]
+    k=len(a)
+    while k!=0:
+        min = a[0][0]
+        for i in range(0, k):
+            if a[i][0]<=min:
+                min=a[i][0]
+                m=i
+        del a[m][0]
+        b.append(min)
+        if a[m]==[]: 
+            del a[m]
+            k=k-1
+    return b
+
+                
+a=[[0,1,3],[2,2,4,7],[0]] 
+print(a)
+b=multi_merge(a)
+print(b)
+
+
+from random import randint
+a=[]
+for i in range(5):
+    x=[randint(0,99) for j in range(randint(1,7))]
+    x.sort()
+    a.append(x)
+print(a)
+b=multi_merge(a)
+print(b)
+
+
+'''
+Opis działania:
+Moje listy:
+    [0,1,3]
+    [2,2,4,7]
+    [0]
+Porównujemy pierwsze liczby z każdej listy, wybieramy minimum, 
+usuwamy tę liczbę z listy. 
+Powtarzamy do osiagnięcia list pustych.
+    
+1. 0<2, czyli 0 ; 0<=0, czyli min =0
+Aktualny stan: 
+    [1,3]
+    [2,2,4,7]
+    [0]
+Utworzona lista: [0]
+2. 1<2, czyli 1 ; 1>0, czyli min = 0
+Aktualny stan: 
+    [1,3]
+    [2,2,4,7]
+    []
+Utworzona lista: [0,0]
+3. 1<2, czyli min = 1
+Aktualny stan: 
+    [3]
+    [2,2,4,7]
+    []
+Utworzona lista: [0,0,1]
+4. 3>2, czyli min = 2
+Aktualny stan: 
+    [3]
+    [2,4,7]
+    []
+Utworzona lista: [0,0,1,2]
+5. 3>2, czyli min = 2
+Aktualny stan: 
+    [3]
+    [4,7]
+    []
+Utworzona lista: [0,0,1,2,2]
+6. 3<4, czyli min = 3
+Aktualny stan: 
+    []
+    [4,7]
+    []
+Utworzona lista: [0,0,1,2,2,3]
+7. min = 4
+Aktualny stan: 
+    []
+    [7]
+    []
+Utworzona lista: [0,0,1,2,2,3,4]
+8. min = 7
+Aktualny stan: 
+    []
+    []
+    []
+Utworzona lista: [0,0,1,2,2,3,4,7]
+
+
+
+
+-----------------------
+
+def IsMaxHeap(a):
+    for i in range(len(a)-1, 0, -1):
+        if a[(i-1)//2] < a[i]: 
+            return False
+    return True
+
+while True:
+    a=[]
+    a = [int(elem) for elem in input("Podaj elementy kopca: ").split()]
+    print(IsMaxHeap(a))
+
+'''
+Opis działania programu:
+    1. Użytkownik wprowadza tablicę, która jest elementami kopca.
+    2. Następuje wywołanie funkcji IsMaxHeap(wprowadzona lista).
+    3. W funkcji następuje wywołanie pętli w której sprawdzane jest od ostatniego 
+       indeksu wartosc "i" czy jest ona większa od rodzica węzła "i" ze wzoru 
+       a[(i-1)/2] < a[i]. (ze względu na numerację indeksów)
+    4.Jesli wystąpi zależnosć a[(i-1)//2] < a[i] funkcja zwraca False.
+    5. Jeli nie wystąpi taka zależnoć to oznacza, że jest to kopiec typu max i zwraca wartosc True.
+    
+Przykład:
+    
+    Wprowadzamy tablicę a = [20,21,10,8,1]
+                   20
+              21       10
+            8   1
+    
+    
+    1. Sprawdzamy a[1] < a[4], czyli 21 < 1 fałsz, czyli sprawdzamy dalej.
+    2. Sprawdzamy a[1] < a[3], czyli 21 < 8 fałsz, czyli sprawdzamy dalej.
+    3. Sprawdzamy a[0] < a[2], czyli 20 < 10 fałsz, czyli sprawdzamy dalej.
+    4. Sprawdzamy a[0] < a[1], czyli 20 < 21 prawda, czyli nie jest to kopiec typu max. 
+
+-----------------
+
+def partition_even_odd(a):
+        i=-1
+        for j in range(len(a)):
+                if a[j]%2==0:
+                        i+=1
+                        a[i],a[j]=a[j],a[i]
+
+def Counting_sort(a,od,do,poz):
+        c=[0]*(do-od+1)
+        #print(c)
+        for x in a:
+                c[x[poz]-od]+=1
+        #print(c)
+        for i in range(1,do-od+1):
+                c[i]+=c[i-1]
+        print(c)
+        b=a[:]
+        for x in reversed(a):
+                b[c[x[poz]-od]-1]=x
+                c[x[poz]-od]-=1
+        return b
+
+def radix_sort(a):
+    a = Counting_sort(a,1,31,0)
+    a = Counting_sort(a,1,12,1)
+    a = Counting_sort(a,1900,2019,2)
+    return a
+
+from random import randint
+a=[[28,7,1954],[11,7,1954],[12,8,2000],[21,5,2000]]
+a+=[[randint(1,31),randint(1,12),randint(1900,2019)] for i in range(10)]
+print(radix_sort(a))
+
+--------------------
+
+def radix_sort(a):
+    a = Counting_sort(a,1,31,0)
+    a = Counting_sort(a,1,12,1)
+    a = Counting_sort(a,1900,2019,2)
+    return a
+
+from random import randint
+a=[[28,7,1954],[11,7,1954],[12,8,2000],[21,5,2000]]
+a+=[[randint(1,31),randint(1,12),randint(1900,2019)] for i in range(10)]
+print(radix_sort(a))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
